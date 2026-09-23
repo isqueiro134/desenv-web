@@ -8,17 +8,27 @@
     $idade = isset($_GET['idade']) ? $_GET['idade'] : null;
 
     $p = new Pessoa();
+    
+    $pessoaSelecionada = null;
+    
+    // Atualizar
+    if ($id && $acao == "editar") {
+        $pessoaSelecionada= $p->listarPorId($id);
+    }
 
+    // Exclusão
     if ($acao == "excluir") {
         $p->excluir($id);
     }
 
-    // Lista de pessoas
-    $pessoas = $p->listar();
-
+    // Inserção
     if ($nome) {
         $p->inserir($nome, $idade);
+        header('Location: index.php');
     }
+
+    // Lista de pessoas
+    $pessoas = $p->listar();
 ?>
 
 <!DOCTYPE html>
@@ -31,19 +41,22 @@
 <body>
     
     <form action="#" method="get">
-        Nome: <input type="text" name="nome" required>
-        Idade: <input type="number" name="idade">
+        Nome: <input type="text" name="nome" required value="<?php echo ($pessoaSelecionada['nome']) ? $pessoaSelecionada['nome'] : '' ?>">
+        Idade: <input type="number" name="idade" value="<?php echo ($pessoaSelecionada['idade']) ? $pessoaSelecionada['idade'] : '' ?>">
         <input type="submit" value="Salvar">
         <input type="reset" value="Limpar">
     </form>
 
-    <table border="1" width="100%>
+    <br>
+
+    <table border="1" width="100%">
         <?php foreach($pessoas as $pessoa) { ?>
             <tr>
                 <td><?php echo $pessoa['nome'] ?></td>
                 <td><?php echo $pessoa['idade'] ?></td>
                 <td>
-                    <a href="index.php?id=<?php echo $pessoa['id'] ?>&acao=Excluir">Excluir</a>
+                    <a href="index.php?id=<?php echo $pessoa['id'] ?>&acao=editar">Editar</a> |
+                    <a href="index.php?id=<?php echo $pessoa['id'] ?>&acao=excluir">Excluir</a>
                 </td>
             </tr>
         <?php } ?>
@@ -51,3 +64,5 @@
 
 </body>
 </html>
+
+<!-- Github Professor: https://github.com/git-ceub/phppoo -->
